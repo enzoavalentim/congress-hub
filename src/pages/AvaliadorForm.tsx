@@ -61,7 +61,11 @@ const AvaliadorForm = () => {
     setErrors({});
     setSaving(true);
 
-    const payload = parsed.data;
+    const payload = {
+      nome: parsed.data.nome,
+      email: parsed.data.email,
+      instituicao: parsed.data.instituicao,
+    };
     const { error } = isEdit
       ? await supabase.from("avaliadores").update(payload).eq("id", id!)
       : await supabase.from("avaliadores").insert(payload);

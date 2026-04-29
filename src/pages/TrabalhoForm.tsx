@@ -87,7 +87,13 @@ const TrabalhoForm = () => {
     setErrors({});
     setSaving(true);
 
-    const payload = parsed.data;
+    const payload = {
+      titulo: parsed.data.titulo,
+      autores: parsed.data.autores,
+      resumo: parsed.data.resumo,
+      categoria_id: parsed.data.categoria_id,
+      data_submissao: parsed.data.data_submissao,
+    };
     const { error } = isEdit
       ? await supabase.from("trabalhos").update(payload).eq("id", id!)
       : await supabase.from("trabalhos").insert(payload);
