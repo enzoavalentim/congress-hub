@@ -5,6 +5,12 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Index from "./pages/Index.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import Layout from "./components/Layout";
+import Avaliadores from "./pages/Avaliadores";
+import AvaliadorForm from "./pages/AvaliadorForm";
+import Trabalhos from "./pages/Trabalhos";
+import TrabalhoForm from "./pages/TrabalhoForm";
+import TrabalhoDetalhe from "./pages/TrabalhoDetalhe";
 
 const queryClient = new QueryClient();
 
@@ -15,7 +21,16 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Index />} />
+          <Route element={<Layout />}>
+            <Route path="/" element={<Index />} />
+            <Route path="/avaliadores" element={<Avaliadores />} />
+            <Route path="/avaliadores/novo" element={<AvaliadorForm />} />
+            <Route path="/avaliadores/:id/editar" element={<AvaliadorForm />} />
+            <Route path="/trabalhos" element={<Trabalhos />} />
+            <Route path="/trabalhos/novo" element={<TrabalhoForm />} />
+            <Route path="/trabalhos/:id" element={<TrabalhoDetalhe />} />
+            <Route path="/trabalhos/:id/editar" element={<TrabalhoForm />} />
+          </Route>
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
