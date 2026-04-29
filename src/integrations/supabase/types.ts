@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      avaliacoes: {
+        Row: {
+          avaliador_id: string
+          created_at: string
+          data_atribuicao: string
+          id: string
+          status: Database["public"]["Enums"]["avaliacao_status"]
+          trabalho_id: string
+        }
+        Insert: {
+          avaliador_id: string
+          created_at?: string
+          data_atribuicao?: string
+          id?: string
+          status?: Database["public"]["Enums"]["avaliacao_status"]
+          trabalho_id: string
+        }
+        Update: {
+          avaliador_id?: string
+          created_at?: string
+          data_atribuicao?: string
+          id?: string
+          status?: Database["public"]["Enums"]["avaliacao_status"]
+          trabalho_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "avaliacoes_avaliador_id_fkey"
+            columns: ["avaliador_id"]
+            isOneToOne: false
+            referencedRelation: "avaliadores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "avaliacoes_trabalho_id_fkey"
+            columns: ["trabalho_id"]
+            isOneToOne: false
+            referencedRelation: "trabalhos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       avaliadores: {
         Row: {
           created_at: string
@@ -102,7 +144,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      avaliacao_status: "pendente" | "em_avaliacao" | "concluida"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -229,6 +271,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      avaliacao_status: ["pendente", "em_avaliacao", "concluida"],
+    },
   },
 } as const
