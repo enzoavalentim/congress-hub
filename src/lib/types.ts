@@ -17,7 +17,7 @@ export type Trabalho = {
   titulo: string;
   resumo: string;
   autores: string;
-  categoria_id: string | null;
+  categoria_id: string;
   data_submissao: string;
   created_at: string;
 };
