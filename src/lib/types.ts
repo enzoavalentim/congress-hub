@@ -21,3 +21,17 @@ export type Trabalho = {
   data_submissao: string;
   created_at: string;
 };
+
+export type AvaliacaoStatus = "pendente" | "em_avaliacao" | "concluida";
+
+export type Avaliacao = {
+  id: string;
+  avaliador_id: string;
+  trabalho_id: string;
+  status: AvaliacaoStatus;
+  data_atribuicao: string;
+  created_at: string;
+};
+
+// Limite máximo de trabalhos por avaliador (regra de negócio)
+export const LIMITE_TRABALHOS_POR_AVALIADOR = 5;
