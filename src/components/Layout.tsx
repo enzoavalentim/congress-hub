@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from "react-router-dom";
-import { GraduationCap, Users, FileText } from "lucide-react";
+import { GraduationCap, Users, FileText, Tags } from "lucide-react";
 
 const navItem =
   "flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors";
@@ -36,6 +36,15 @@ const Layout = () => {
             >
               <FileText className="h-4 w-4" />
               Trabalhos
+            </NavLink>
+            <NavLink
+              to="/categorias"
+              className={({ isActive }) =>
+                `${navItem} ${isActive ? "bg-secondary text-secondary-foreground" : "text-muted-foreground hover:bg-secondary/60"}`
+              }
+            >
+              <Tags className="h-4 w-4" />
+              Categorias
             </NavLink>
           </nav>
         </div>

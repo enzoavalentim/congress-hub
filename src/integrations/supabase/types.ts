@@ -59,7 +59,7 @@ export type Database = {
       trabalhos: {
         Row: {
           autores: string
-          categoria_id: string | null
+          categoria_id: string
           created_at: string
           data_submissao: string
           id: string
@@ -68,7 +68,7 @@ export type Database = {
         }
         Insert: {
           autores: string
-          categoria_id?: string | null
+          categoria_id: string
           created_at?: string
           data_submissao?: string
           id?: string
@@ -77,7 +77,7 @@ export type Database = {
         }
         Update: {
           autores?: string
-          categoria_id?: string | null
+          categoria_id?: string
           created_at?: string
           data_submissao?: string
           id?: string

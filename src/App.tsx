@@ -11,6 +11,7 @@ import AvaliadorForm from "./pages/AvaliadorForm";
 import Trabalhos from "./pages/Trabalhos";
 import TrabalhoForm from "./pages/TrabalhoForm";
 import TrabalhoDetalhe from "./pages/TrabalhoDetalhe";
+import Categorias from "./pages/Categorias";
 
 const queryClient = new QueryClient();
 
@@ -30,6 +31,7 @@ const App = () => (
             <Route path="/trabalhos/novo" element={<TrabalhoForm />} />
             <Route path="/trabalhos/:id" element={<TrabalhoDetalhe />} />
             <Route path="/trabalhos/:id/editar" element={<TrabalhoForm />} />
+            <Route path="/categorias" element={<Categorias />} />
           </Route>
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

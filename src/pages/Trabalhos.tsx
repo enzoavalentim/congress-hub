@@ -6,6 +6,16 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import type { Trabalho, Categoria } from "@/lib/types";
 
@@ -13,6 +23,7 @@ const Trabalhos = () => {
   const [trabalhos, setTrabalhos] = useState<Trabalho[]>([]);
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [loading, setLoading] = useState(true);
+  const [toDelete, setToDelete] = useState<Trabalho | null>(null);
 
   const load = async () => {
     setLoading(true);
@@ -33,14 +44,15 @@ const Trabalhos = () => {
   const catNome = (id: string | null) =>
     id ? categorias.find((c) => c.id === id)?.nome ?? "—" : "—";
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Deseja realmente excluir este trabalho?")) return;
-    const { error } = await supabase.from("trabalhos").delete().eq("id", id);
+  const confirmDelete = async () => {
+    if (!toDelete) return;
+    const { error } = await supabase.from("trabalhos").delete().eq("id", toDelete.id);
     if (error) toast.error("Erro ao excluir");
     else {
       toast.success("Trabalho excluído");
       load();
     }
+    setToDelete(null);
   };
 
   return (
@@ -101,7 +113,7 @@ const Trabalhos = () => {
                         <Pencil className="h-4 w-4" />
                       </Link>
                     </Button>
-                    <Button variant="ghost" size="icon" onClick={() => handleDelete(t.id)}>
+                    <Button variant="ghost" size="icon" onClick={() => setToDelete(t)}>
                       <Trash2 className="h-4 w-4 text-destructive" />
                     </Button>
                   </TableCell>
@@ -111,6 +123,22 @@ const Trabalhos = () => {
           </TableBody>
         </Table>
       </Card>
+
+      <AlertDialog open={!!toDelete} onOpenChange={(o) => !o && setToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir trabalho?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta ação não pode ser desfeita. O trabalho{" "}
+              <strong>{toDelete?.titulo}</strong> será removido permanentemente.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete}>Excluir</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
