@@ -5,12 +5,23 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import type { Avaliador } from "@/lib/types";
 
 const Avaliadores = () => {
   const [avaliadores, setAvaliadores] = useState<Avaliador[]>([]);
   const [loading, setLoading] = useState(true);
+  const [toDelete, setToDelete] = useState<Avaliador | null>(null);
 
   const load = async () => {
     setLoading(true);
@@ -27,14 +38,15 @@ const Avaliadores = () => {
     load();
   }, []);
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Deseja realmente excluir este avaliador?")) return;
-    const { error } = await supabase.from("avaliadores").delete().eq("id", id);
+  const confirmDelete = async () => {
+    if (!toDelete) return;
+    const { error } = await supabase.from("avaliadores").delete().eq("id", toDelete.id);
     if (error) toast.error("Erro ao excluir");
     else {
       toast.success("Avaliador excluído");
       load();
     }
+    setToDelete(null);
   };
 
   return (
@@ -86,7 +98,7 @@ const Avaliadores = () => {
                         <Pencil className="h-4 w-4" />
                       </Link>
                     </Button>
-                    <Button variant="ghost" size="icon" onClick={() => handleDelete(a.id)}>
+                    <Button variant="ghost" size="icon" onClick={() => setToDelete(a)}>
                       <Trash2 className="h-4 w-4 text-destructive" />
                     </Button>
                   </TableCell>
@@ -96,6 +108,22 @@ const Avaliadores = () => {
           </TableBody>
         </Table>
       </Card>
+
+      <AlertDialog open={!!toDelete} onOpenChange={(o) => !o && setToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir avaliador?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta ação não pode ser desfeita. O avaliador{" "}
+              <strong>{toDelete?.nome}</strong> será removido permanentemente.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete}>Excluir</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

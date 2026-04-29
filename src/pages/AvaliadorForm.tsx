@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
+import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,18 +9,35 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 
+// Schema de validação centralizado (client-side); o banco também garante email único
+const avaliadorSchema = z.object({
+  nome: z.string().trim().min(1, "Nome é obrigatório").max(100, "Nome muito longo"),
+  email: z
+    .string()
+    .trim()
+    .min(1, "Email é obrigatório")
+    .email("Email inválido")
+    .max(255, "Email muito longo"),
+  instituicao: z.string().trim().min(1, "Instituição é obrigatória").max(150, "Texto muito longo"),
+});
+
 const AvaliadorForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const isEdit = Boolean(id);
 
   const [form, setForm] = useState({ nome: "", email: "", instituicao: "" });
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (!id) return;
     (async () => {
-      const { data, error } = await supabase.from("avaliadores").select("*").eq("id", id).maybeSingle();
+      const { data, error } = await supabase
+        .from("avaliadores")
+        .select("*")
+        .eq("id", id)
+        .maybeSingle();
       if (error || !data) {
         toast.error("Avaliador não encontrado");
         navigate("/avaliadores");
@@ -31,21 +49,30 @@ const AvaliadorForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const parsed = avaliadorSchema.safeParse(form);
+    if (!parsed.success) {
+      const fieldErrors: Record<string, string> = {};
+      parsed.error.issues.forEach((i) => {
+        if (i.path[0]) fieldErrors[i.path[0] as string] = i.message;
+      });
+      setErrors(fieldErrors);
+      return;
+    }
+    setErrors({});
     setSaving(true);
-    if (isEdit) {
-      const { error } = await supabase.from("avaliadores").update(form).eq("id", id!);
-      if (error) toast.error("Erro ao atualizar (email já cadastrado?)");
-      else {
-        toast.success("Avaliador atualizado");
-        navigate("/avaliadores");
-      }
+
+    const payload = parsed.data;
+    const { error } = isEdit
+      ? await supabase.from("avaliadores").update(payload).eq("id", id!)
+      : await supabase.from("avaliadores").insert(payload);
+
+    if (error) {
+      // Código 23505 = violação de unique constraint (email duplicado)
+      if (error.code === "23505") toast.error("Já existe um avaliador com esse email");
+      else toast.error(isEdit ? "Erro ao atualizar" : "Erro ao cadastrar");
     } else {
-      const { error } = await supabase.from("avaliadores").insert(form);
-      if (error) toast.error("Erro ao cadastrar (email já cadastrado?)");
-      else {
-        toast.success("Avaliador cadastrado");
-        navigate("/avaliadores");
-      }
+      toast.success(isEdit ? "Avaliador atualizado" : "Avaliador cadastrado");
+      navigate("/avaliadores");
     }
     setSaving(false);
   };
@@ -63,29 +90,39 @@ const AvaliadorForm = () => {
           <CardTitle>{isEdit ? "Editar avaliador" : "Novo avaliador"}</CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4" noValidate>
             <div className="space-y-2">
-              <Label htmlFor="nome">Nome</Label>
-              <Input id="nome" required value={form.nome} onChange={(e) => setForm({ ...form, nome: e.target.value })} />
+              <Label htmlFor="nome">Nome *</Label>
+              <Input
+                id="nome"
+                value={form.nome}
+                onChange={(e) => setForm({ ...form, nome: e.target.value })}
+                aria-invalid={!!errors.nome}
+              />
+              {errors.nome && <p className="text-xs text-destructive">{errors.nome}</p>}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">Email *</Label>
               <Input
                 id="email"
                 type="email"
-                required
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
+                aria-invalid={!!errors.email}
               />
+              {errors.email && <p className="text-xs text-destructive">{errors.email}</p>}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="instituicao">Instituição</Label>
+              <Label htmlFor="instituicao">Instituição *</Label>
               <Input
                 id="instituicao"
-                required
                 value={form.instituicao}
                 onChange={(e) => setForm({ ...form, instituicao: e.target.value })}
+                aria-invalid={!!errors.instituicao}
               />
+              {errors.instituicao && (
+                <p className="text-xs text-destructive">{errors.instituicao}</p>
+              )}
             </div>
             <div className="flex justify-end gap-2 pt-2">
               <Button type="button" variant="outline" onClick={() => navigate("/avaliadores")}>
