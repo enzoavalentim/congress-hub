@@ -13,6 +13,9 @@ import TrabalhoForm from "./pages/TrabalhoForm";
 import TrabalhoDetalhe from "./pages/TrabalhoDetalhe";
 import Categorias from "./pages/Categorias";
 import Atribuicoes from "./pages/Atribuicoes";
+import Auth from "./pages/Auth";
+import { AuthProvider } from "./contexts/AuthContext";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -22,22 +25,38 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Routes>
-          <Route element={<Layout />}>
-            <Route path="/" element={<Index />} />
-            <Route path="/avaliadores" element={<Avaliadores />} />
-            <Route path="/avaliadores/novo" element={<AvaliadorForm />} />
-            <Route path="/avaliadores/:id/editar" element={<AvaliadorForm />} />
-            <Route path="/trabalhos" element={<Trabalhos />} />
-            <Route path="/trabalhos/novo" element={<TrabalhoForm />} />
-            <Route path="/trabalhos/:id" element={<TrabalhoDetalhe />} />
-            <Route path="/trabalhos/:id/editar" element={<TrabalhoForm />} />
-            <Route path="/categorias" element={<Categorias />} />
-            <Route path="/atribuicoes" element={<Atribuicoes />} />
-          </Route>
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <AuthProvider>
+          <Routes>
+            <Route path="/auth" element={<Auth />} />
+
+            {/* Rotas autenticadas */}
+            <Route element={<ProtectedRoute />}>
+              <Route element={<Layout />}>
+                <Route path="/" element={<Index />} />
+                <Route path="/trabalhos" element={<Trabalhos />} />
+                <Route path="/trabalhos/:id" element={<TrabalhoDetalhe />} />
+                <Route path="/categorias" element={<Categorias />} />
+
+                {/* Aluno + Gestor podem criar/editar trabalhos */}
+                <Route element={<ProtectedRoute roles={["aluno", "gestor"]} />}>
+                  <Route path="/trabalhos/novo" element={<TrabalhoForm />} />
+                  <Route path="/trabalhos/:id/editar" element={<TrabalhoForm />} />
+                </Route>
+
+                {/* Apenas Gestor */}
+                <Route element={<ProtectedRoute roles={["gestor"]} />}>
+                  <Route path="/avaliadores" element={<Avaliadores />} />
+                  <Route path="/avaliadores/novo" element={<AvaliadorForm />} />
+                  <Route path="/avaliadores/:id/editar" element={<AvaliadorForm />} />
+                  <Route path="/atribuicoes" element={<Atribuicoes />} />
+                </Route>
+              </Route>
+            </Route>
+
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
