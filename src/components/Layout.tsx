@@ -12,8 +12,7 @@ const Layout = () => {
   const { profile, role, signOut } = useAuth();
 
   // Itens visíveis por perfil
-  const showAvaliadores = role === "gestor";
-  const showAtribuicoes = role === "gestor";
+  const isGestor = role === "gestor";
 
   return (
     <div className="min-h-screen bg-background">
@@ -47,7 +46,7 @@ const Layout = () => {
               <Tags className="h-4 w-4" />
               Categorias
             </NavLink>
-            {showAvaliadores && (
+            {isGestor && (
               <NavLink
                 to="/avaliadores"
                 className={({ isActive }) =>
@@ -58,7 +57,18 @@ const Layout = () => {
                 Avaliadores
               </NavLink>
             )}
-            {showAtribuicoes && (
+            {isGestor && (
+              <NavLink
+                to="/alunos"
+                className={({ isActive }) =>
+                  `${navItem} ${isActive ? "bg-secondary text-secondary-foreground" : "text-muted-foreground hover:bg-secondary/60"}`
+                }
+              >
+                <Users className="h-4 w-4" />
+                Alunos
+              </NavLink>
+            )}
+            {isGestor && (
               <NavLink
                 to="/atribuicoes"
                 className={({ isActive }) =>
