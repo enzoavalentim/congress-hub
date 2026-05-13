@@ -13,6 +13,7 @@ import TrabalhoForm from "./pages/TrabalhoForm";
 import TrabalhoDetalhe from "./pages/TrabalhoDetalhe";
 import Categorias from "./pages/Categorias";
 import Atribuicoes from "./pages/Atribuicoes";
+import Alunos from "./pages/Alunos";
 import Auth from "./pages/Auth";
 import { AuthProvider } from "./contexts/AuthContext";
 import { ProtectedRoute } from "./components/ProtectedRoute";
@@ -46,9 +47,9 @@ const App = () => (
                 {/* Apenas Gestor */}
                 <Route element={<ProtectedRoute roles={["gestor"]} />}>
                   <Route path="/avaliadores" element={<Avaliadores />} />
-                  <Route path="/avaliadores/novo" element={<AvaliadorForm />} />
                   <Route path="/avaliadores/:id/editar" element={<AvaliadorForm />} />
                   <Route path="/atribuicoes" element={<Atribuicoes />} />
+                  <Route path="/alunos" element={<Alunos />} />
                 </Route>
               </Route>
             </Route>
