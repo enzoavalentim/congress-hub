@@ -82,6 +82,12 @@ const Index = () => {
               to="/avaliadores"
             />
             <DashCard
+              icon={<Users className="h-5 w-5" />}
+              title="Alunos"
+              description="Veja todos os alunos cadastrados."
+              to="/alunos"
+            />
+            <DashCard
               icon={<FileText className="h-5 w-5" />}
               title="Trabalhos"
               description="Visualize todos os trabalhos submetidos."
