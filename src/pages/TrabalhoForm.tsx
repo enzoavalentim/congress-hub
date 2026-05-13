@@ -89,6 +89,12 @@ const TrabalhoForm = () => {
     setErrors({});
     setSaving(true);
 
+    if (!isEdit && !user?.id) {
+      toast.error("Usuário não identificado. Faça login novamente.");
+      setSaving(false);
+      return;
+    }
+
     const basePayload = {
       titulo: parsed.data.titulo,
       autores: parsed.data.autores,
