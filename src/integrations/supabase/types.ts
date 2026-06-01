@@ -63,7 +63,6 @@ export type Database = {
           id: string
           instituicao: string
           nome: string
-          user_id: string | null
         }
         Insert: {
           created_at?: string
@@ -71,7 +70,6 @@ export type Database = {
           id?: string
           instituicao: string
           nome: string
-          user_id?: string | null
         }
         Update: {
           created_at?: string
@@ -79,7 +77,6 @@ export type Database = {
           id?: string
           instituicao?: string
           nome?: string
-          user_id?: string | null
         }
         Relationships: []
       }
@@ -101,30 +98,8 @@ export type Database = {
         }
         Relationships: []
       }
-      profiles: {
-        Row: {
-          created_at: string
-          email: string
-          id: string
-          nome: string
-        }
-        Insert: {
-          created_at?: string
-          email: string
-          id: string
-          nome: string
-        }
-        Update: {
-          created_at?: string
-          email?: string
-          id?: string
-          nome?: string
-        }
-        Relationships: []
-      }
       trabalhos: {
         Row: {
-          aluno_id: string | null
           autores: string
           categoria_id: string
           created_at: string
@@ -134,7 +109,6 @@ export type Database = {
           titulo: string
         }
         Insert: {
-          aluno_id?: string | null
           autores: string
           categoria_id: string
           created_at?: string
@@ -144,7 +118,6 @@ export type Database = {
           titulo: string
         }
         Update: {
-          aluno_id?: string | null
           autores?: string
           categoria_id?: string
           created_at?: string
@@ -163,54 +136,14 @@ export type Database = {
           },
         ]
       }
-      user_roles: {
-        Row: {
-          created_at: string
-          id: string
-          role: Database["public"]["Enums"]["app_role"]
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          role: Database["public"]["Enums"]["app_role"]
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          role?: Database["public"]["Enums"]["app_role"]
-          user_id?: string
-        }
-        Relationships: []
-      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      has_role: {
-        Args: {
-          _role: Database["public"]["Enums"]["app_role"]
-          _user_id: string
-        }
-        Returns: boolean
-      }
-      is_aluno_dono_trabalho: {
-        Args: { _trabalho_id: string; _user_id: string }
-        Returns: boolean
-      }
-      is_avaliador_de_trabalho: {
-        Args: { _trabalho_id: string; _user_id: string }
-        Returns: boolean
-      }
-      is_avaliador_user: {
-        Args: { _avaliador_id: string; _user_id: string }
-        Returns: boolean
-      }
+      [_ in never]: never
     }
     Enums: {
-      app_role: "aluno" | "avaliador" | "gestor"
       avaliacao_status: "pendente" | "em_avaliacao" | "concluida"
     }
     CompositeTypes: {
@@ -339,7 +272,6 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["aluno", "avaliador", "gestor"],
       avaliacao_status: ["pendente", "em_avaliacao", "concluida"],
     },
   },

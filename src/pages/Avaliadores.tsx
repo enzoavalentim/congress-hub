@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Pencil, Trash2 } from "lucide-react";
+import { Plus, Pencil, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -51,11 +51,16 @@ const Avaliadores = () => {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">Avaliadores</h1>
-        <p className="text-sm text-muted-foreground">
-          Gerencie os avaliadores cadastrados. Novos avaliadores se cadastram pela tela de login.
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold">Avaliadores</h1>
+          <p className="text-sm text-muted-foreground">Gerencie os avaliadores cadastrados.</p>
+        </div>
+        <Button asChild>
+          <Link to="/avaliadores/novo">
+            <Plus className="mr-2 h-4 w-4" /> Novo avaliador
+          </Link>
+        </Button>
       </div>
 
       <Card className="shadow-[var(--shadow-card)]">

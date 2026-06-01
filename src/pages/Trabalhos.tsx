@@ -18,14 +18,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import type { Trabalho, Categoria } from "@/lib/types";
-import { useAuth } from "@/contexts/AuthContext";
 
 const Trabalhos = () => {
-  const { role, user } = useAuth();
-  const canDelete = role === "gestor";
-  const canCreate = role === "aluno" || role === "gestor";
-  const canEdit = (t: Trabalho & { aluno_id?: string | null }) =>
-    role === "gestor" || (role === "aluno" && t.aluno_id === user?.id);
   const [trabalhos, setTrabalhos] = useState<Trabalho[]>([]);
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [loading, setLoading] = useState(true);
@@ -68,13 +62,11 @@ const Trabalhos = () => {
           <h1 className="text-2xl font-bold">Trabalhos</h1>
           <p className="text-sm text-muted-foreground">Trabalhos submetidos ao congresso.</p>
         </div>
-        {canCreate && (
-          <Button asChild>
-            <Link to="/trabalhos/novo">
-              <Plus className="mr-2 h-4 w-4" /> Novo trabalho
-            </Link>
-          </Button>
-        )}
+        <Button asChild>
+          <Link to="/trabalhos/novo">
+            <Plus className="mr-2 h-4 w-4" /> Novo trabalho
+          </Link>
+        </Button>
       </div>
 
       <Card className="shadow-[var(--shadow-card)]">
@@ -116,18 +108,14 @@ const Trabalhos = () => {
                         <Eye className="h-4 w-4" />
                       </Link>
                     </Button>
-                    {canEdit(t) && (
-                      <Button variant="ghost" size="icon" asChild>
-                        <Link to={`/trabalhos/${t.id}/editar`}>
-                          <Pencil className="h-4 w-4" />
-                        </Link>
-                      </Button>
-                    )}
-                    {canDelete && (
-                      <Button variant="ghost" size="icon" onClick={() => setToDelete(t)}>
-                        <Trash2 className="h-4 w-4 text-destructive" />
-                      </Button>
-                    )}
+                    <Button variant="ghost" size="icon" asChild>
+                      <Link to={`/trabalhos/${t.id}/editar`}>
+                        <Pencil className="h-4 w-4" />
+                      </Link>
+                    </Button>
+                    <Button variant="ghost" size="icon" onClick={() => setToDelete(t)}>
+                      <Trash2 className="h-4 w-4 text-destructive" />
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))

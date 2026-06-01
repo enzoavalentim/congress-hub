@@ -17,7 +17,6 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 import type { Categoria } from "@/lib/types";
-import { useAuth } from "@/contexts/AuthContext";
 
 // Validação: categoria é obrigatória (regra de negócio)
 const trabalhoSchema = z.object({
@@ -31,7 +30,6 @@ const trabalhoSchema = z.object({
 const TrabalhoForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user } = useAuth();
   const isEdit = Boolean(id);
 
   const [categorias, setCategorias] = useState<Categoria[]>([]);
@@ -89,26 +87,16 @@ const TrabalhoForm = () => {
     setErrors({});
     setSaving(true);
 
-    if (!isEdit && !user?.id) {
-      toast.error("Usuário não identificado. Faça login novamente.");
-      setSaving(false);
-      return;
-    }
-
-    const basePayload = {
+    const payload = {
       titulo: parsed.data.titulo,
       autores: parsed.data.autores,
       resumo: parsed.data.resumo,
       categoria_id: parsed.data.categoria_id,
       data_submissao: parsed.data.data_submissao,
     };
-
-    // Ao criar, associa automaticamente o aluno logado como autor
-    const insertPayload = { ...basePayload, aluno_id: user?.id };
-
     const { error } = isEdit
-      ? await supabase.from("trabalhos").update(basePayload).eq("id", id!)
-      : await supabase.from("trabalhos").insert(insertPayload);
+      ? await supabase.from("trabalhos").update(payload).eq("id", id!)
+      : await supabase.from("trabalhos").insert(payload);
 
     if (error) toast.error(isEdit ? "Erro ao atualizar" : "Erro ao cadastrar");
     else {
